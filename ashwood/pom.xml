@@ -14,9 +14,9 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:svn:https://svn.objectstyle.org/repos/ashwood2/trunk/ashwood2</connection>
-		<developerConnection>scm:svn:https://svn.objectstyle.org/repos/ashwood2/trunk/ashwood2</developerConnection>
-		<url>scm:svn:https://svn.objectstyle.org/repos/ashwood2/trunk/ashwood2</url>
+		<connection>scm:svn:https://svn.objectstyle.org/repos/ashwood2/trunk/ashwood</connection>
+		<developerConnection>scm:svn:https://svn.objectstyle.org/repos/ashwood2/trunk/ashwood</developerConnection>
+		<url>scm:svn:https://svn.objectstyle.org/repos/ashwood2/trunk/ashwood</url>
 	</scm>
 	<url>http://objectstyle.org/ashwood/</url>
 	<dependencies>
