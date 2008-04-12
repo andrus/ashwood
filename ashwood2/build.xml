@@ -1,0 +1,83 @@
+<project name="ashwood" default="dist" basedir=".">
+    <description>
+        ASHWOOD 1.1
+    </description>
+
+  <property name="project.version" value="1.1"/>
+  <property name="src" location="src"/>
+  <property name="build" location="build"/>
+  <property name="distroot"  location="dist"/>
+  <property name="dist"  location="${distroot}/ashwood-${project.version}"/>
+  <property name="resources"  location="resources"/>
+
+  
+  <path id="project.class.path">
+    <fileset dir="lib">
+        <include name="**/*.jar"/>
+    </fileset>
+  </path>
+
+  <property name="project_classpath"  value="./commons-collections.jar ./commons-lang-1.0.1.jar ./jgraph.jar"/>
+
+  <target name="init">
+    <!-- Create the time stamp -->
+    <tstamp/>
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build}"/>
+    <mkdir dir="${dist}"/>
+    <mkdir dir="${dist}/lib"/>
+  </target>
+
+  <target name="compile" depends="init" description="compile the source " >
+    <javac srcdir="${src}"
+           destdir="${build}" 
+           excludes="org/objectstyle/ashwood/test/**">
+      <classpath refid="project.class.path"/>
+    </javac>
+    <copy todir="${build}" includeEmptyDirs="false" >
+      <fileset dir="${src}" >
+        <exclude name="**/*.java"/>
+        <exclude name="**/*.jbx"/>
+        <exclude name="**/*.html"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="dist" depends="compile, api" description="generate the distribution" >
+    <jar jarfile="${dist}/lib/ashwood.jar" basedir="${build}">
+      <manifest>
+        <attribute name="Class-Path" value="${project_classpath}"/>
+      </manifest>
+    </jar>
+    <copy todir="${dist}/lib" >
+      <fileset dir="lib" />
+    </copy>
+  </target>
+
+  <target name="clean" description="clean up" >
+    <delete dir="${build}"/>
+    <delete dir="${distroot}"/>
+  </target>
+  
+  <target name="api">
+    <javadoc packagenames="org.objectstyle.ashwood.*"
+             sourcepath="src"
+             defaultexcludes="yes"
+             destdir="${dist}/doc/api"
+             author="true"
+             use="true"
+             splitindex="true"
+             windowtitle="ASHWOOD API">
+
+            <doctitle><![CDATA[<h2><a href="http://objectstyle.org/ashwood/" target="_top"><a>
+            		API: ASHWOOD (Version ${project.version})</h2>]]></doctitle>
+            <bottom><![CDATA[<!--SFLOGO--> &nbsp; <i>Copyright &#169; 2003 <a href=
+            "http://objectstyle.org/ashwood" target="_top">ObjectStyle.org - ASHWOOD</a> All Rights Reserved.</i>]]>
+            </bottom>
+            <classpath refid="project.class.path"/>
+        </javadoc>
+    </target>
+
+</project>
+
+

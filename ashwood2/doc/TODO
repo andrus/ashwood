@@ -1,0 +1,14 @@
+Graphs:
+1) Add abstract structures: undirected graphs, trees, think of indexed
+   and dynamic structures
+2) Implement the shortest path and match making algs. What else?
+3) Add matrix and list graph implementations
+4) Add XML serialization
+5) Come up with useful applications of the lib
+
+DbUtil:
+1) More interesting RandomSchema supporting more rdbms
+
+Common:
+1) Add some docs.
+2) Separate the test code
