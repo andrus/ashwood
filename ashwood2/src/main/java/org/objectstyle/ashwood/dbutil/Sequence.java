@@ -42,46 +42,53 @@
 
 package org.objectstyle.ashwood.dbutil;
 
-import java.io.*;
+import java.io.PrintWriter;
+import java.io.Serializable;
 
 public class Sequence implements Serializable {
 
-  private String name = "SEQ";
-  private int increment = 10;
-  private int initialValue = 1;
+	private String name = "SEQ";
+	private int increment = 10;
+	private int initialValue = 1;
 
-  public Sequence() {
-  }
-  public Sequence(String name) {
-    setName(name);
-  }
+	public Sequence() {
+	}
 
-  public String getName() {
-    return name;
-  }
-  public void setName(String name) {
-    this.name = name;
-  }
-  public void setIncrement(int increment) {
-    this.increment = increment;
-  }
-  public int getIncrement() {
-    return increment;
-  }
-  public void setInitialValue(int initialValue) {
-    this.initialValue = initialValue;
-  }
-  public int getInitialValue() {
-    return initialValue;
-  }
+	public Sequence(String name) {
+		setName(name);
+	}
 
-  public void toCreateSQL(PrintWriter out) {
-    out.println("CREATE SEQUENCE " + name);
-    out.println("  START WITH " + initialValue);
-    out.print("  INCREMENT BY " + increment);
-  }
+	public String getName() {
+		return name;
+	}
 
-  public void toDropSQL(PrintWriter out) {
-    out.print("DROP SEQUENCE " + name);
-  }
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setIncrement(int increment) {
+		this.increment = increment;
+	}
+
+	public int getIncrement() {
+		return increment;
+	}
+
+	public void setInitialValue(int initialValue) {
+		this.initialValue = initialValue;
+	}
+
+	public int getInitialValue() {
+		return initialValue;
+	}
+
+	public void toCreateSQL(PrintWriter out) {
+		out.println("CREATE SEQUENCE " + name);
+		out.println("  START WITH " + initialValue);
+		out.print("  INCREMENT BY " + increment);
+	}
+
+	public void toDropSQL(PrintWriter out) {
+		out.print("DROP SEQUENCE " + name);
+	}
 }

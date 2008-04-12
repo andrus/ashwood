@@ -42,70 +42,85 @@
 
 package org.objectstyle.ashwood.dbutil;
 
-import java.util.*;
-import java.sql.*;
-import org.apache.commons.lang.*;
-import org.apache.commons.collections.*;
-import org.objectstyle.ashwood.graph.*;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+
+import org.objectstyle.ashwood.graph.Digraph;
 
 public class DbUtils {
 
-  private DbUtils() {
-  }
+	private DbUtils() {
+	}
 
-  public static void getAllTables(String catalog, String schema, Collection tables, DatabaseMetaData metaData) throws SQLException {
-    String[] tableTypes = new String[] {"TABLE"};
-    ResultSet rs = null;
-    try {
-      rs = metaData.getTables(catalog, schema, null, tableTypes);
-      while (rs.next()) {
-        Table table = new Table(catalog, schema, rs.getString("TABLE_NAME"));
-        tables.add(table);
-      }
-    } finally {
-      try {rs.close();}
-      catch (Exception e) {}
-    }
-  }
+	public static void getAllTables(String catalog, String schema,
+			Collection tables, DatabaseMetaData metaData) throws SQLException {
+		String[] tableTypes = new String[] { "TABLE" };
+		ResultSet rs = null;
+		try {
+			rs = metaData.getTables(catalog, schema, null, tableTypes);
+			while (rs.next()) {
+				Table table = new Table(catalog, schema, rs
+						.getString("TABLE_NAME"));
+				tables.add(table);
+			}
+		} finally {
+			try {
+				rs.close();
+			} catch (Exception e) {
+			}
+		}
+	}
 
-  public static void refreshTables(Collection tables, DatabaseMetaData metaData) throws SQLException {
-    refreshTables(tables, metaData, true, true, true);
-  }
+	public static void refreshTables(Collection tables,
+			DatabaseMetaData metaData) throws SQLException {
+		refreshTables(tables, metaData, true, true, true);
+	}
 
-  public static void refreshTables(Collection tables, DatabaseMetaData metaData, boolean columns, boolean primaryKeys, boolean foreignKeys) throws SQLException {
-    for (Iterator i = tables.iterator(); i.hasNext();) {
-      Table table = (Table)i.next();
-      if (columns) table.refreshColumns(metaData);
-      if (primaryKeys) table.refreshPrimaryKeys(metaData);
-      if (foreignKeys) table.refreshForeignKeys(metaData);
-    }
-  }
+	public static void refreshTables(Collection tables,
+			DatabaseMetaData metaData, boolean columns, boolean primaryKeys,
+			boolean foreignKeys) throws SQLException {
+		for (Iterator i = tables.iterator(); i.hasNext();) {
+			Table table = (Table) i.next();
+			if (columns)
+				table.refreshColumns(metaData);
+			if (primaryKeys)
+				table.refreshPrimaryKeys(metaData);
+			if (foreignKeys)
+				table.refreshForeignKeys(metaData);
+		}
+	}
 
-  public static Digraph buildReferentialDigraph(Digraph digraph, Collection tables) {
-    HashMap tableMap = new HashMap();
-    for (Iterator i = tables.iterator(); i.hasNext();) {
-      Table table = (Table)i.next();
-      tableMap.put(table.getFullName(), table);
-      digraph.addVertex(table);
-    }
-    for (Iterator i = tables.iterator(); i.hasNext();) {
-      Table dst = (Table)i.next();
-      for (Iterator j = dst.getForeignKeys().iterator(); j.hasNext();) {
-        ForeignKey fk = (ForeignKey)j.next();
-        String pkTableFullName = Table.composeFullName(fk.getPkTableCatalog(),
-            fk.getPkTableSchema(),
-            fk.getPkTableName());
-        Table origin = (Table)tableMap.get(pkTableFullName);
-        if (origin != null) {
-          ArrayList fks = (ArrayList)digraph.getArc(origin, dst);
-          if (fks == null) {
-            fks = new ArrayList();
-            digraph.putArc(origin, dst, fks);
-          }
-          fks.add(fk);
-        }
-      }
-    }
-    return digraph;
-  }
+	public static Digraph buildReferentialDigraph(Digraph digraph,
+			Collection tables) {
+		HashMap tableMap = new HashMap();
+		for (Iterator i = tables.iterator(); i.hasNext();) {
+			Table table = (Table) i.next();
+			tableMap.put(table.getFullName(), table);
+			digraph.addVertex(table);
+		}
+		for (Iterator i = tables.iterator(); i.hasNext();) {
+			Table dst = (Table) i.next();
+			for (Iterator j = dst.getForeignKeys().iterator(); j.hasNext();) {
+				ForeignKey fk = (ForeignKey) j.next();
+				String pkTableFullName = Table.composeFullName(fk
+						.getPkTableCatalog(), fk.getPkTableSchema(), fk
+						.getPkTableName());
+				Table origin = (Table) tableMap.get(pkTableFullName);
+				if (origin != null) {
+					ArrayList fks = (ArrayList) digraph.getArc(origin, dst);
+					if (fks == null) {
+						fks = new ArrayList();
+						digraph.putArc(origin, dst, fks);
+					}
+					fks.add(fk);
+				}
+			}
+		}
+		return digraph;
+	}
 }

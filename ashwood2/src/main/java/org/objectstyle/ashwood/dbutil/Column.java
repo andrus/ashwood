@@ -46,90 +46,115 @@ import java.io.Serializable;
 
 public class Column implements Serializable {
 
-  private Table owner;
-  private String name;
-  private int dataType;
-  private String typeName;
-  private int size;
-  private int decimalDigits;
-  private int radix;
-  private int nullable;
-  private String remarks;
-  private String defaultValue;
-  private int charOctetLength;
-  private int ordinalPosition;
-  public Column() {
-  }
-  public Table getOwner() {
-    return owner;
-  }
-  public void setOwner(Table owner) {
-    this.owner = owner;
-  }
-  public void setName(String name) {
-    this.name = name;
-  }
-  public String getName() {
-    return name;
-  }
-  public void setDataType(int dataType) {
-    this.dataType = dataType;
-  }
-  public int getDataType() {
-    return dataType;
-  }
-  public void setTypeName(String typeName) {
-    this.typeName = typeName;
-  }
-  public String getTypeName() {
-    return typeName;
-  }
-  public void setSize(int size) {
-    this.size = size;
-  }
-  public int getSize() {
-    return size;
-  }
-  public void setDecimalDigits(int decimalDigits) {
-    this.decimalDigits = decimalDigits;
-  }
-  public int getDecimalDigits() {
-    return decimalDigits;
-  }
-  public void setRadix(int radix) {
-    this.radix = radix;
-  }
-  public int getRadix() {
-    return radix;
-  }
-  public void setNullable(int nullable) {
-    this.nullable = nullable;
-  }
-  public int getNullable() {
-    return nullable;
-  }
-  public void setRemarks(String remarks) {
-    this.remarks = remarks;
-  }
-  public String getRemarks() {
-    return remarks;
-  }
-  public void setDefaultValue(String defaultValue) {
-    this.defaultValue = defaultValue;
-  }
-  public String getDefaultValue() {
-    return defaultValue;
-  }
-  public void setCharOctetLength(int charOctetLength) {
-    this.charOctetLength = charOctetLength;
-  }
-  public int getCharOctetLength() {
-    return charOctetLength;
-  }
-  public void setOrdinalPosition(int ordinalPosition) {
-    this.ordinalPosition = ordinalPosition;
-  }
-  public int getOrdinalPosition() {
-    return ordinalPosition;
-  }
+	private Table owner;
+	private String name;
+	private int dataType;
+	private String typeName;
+	private int size;
+	private int decimalDigits;
+	private int radix;
+	private int nullable;
+	private String remarks;
+	private String defaultValue;
+	private int charOctetLength;
+	private int ordinalPosition;
+
+	public Column() {
+	}
+
+	public Table getOwner() {
+		return owner;
+	}
+
+	public void setOwner(Table owner) {
+		this.owner = owner;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setDataType(int dataType) {
+		this.dataType = dataType;
+	}
+
+	public int getDataType() {
+		return dataType;
+	}
+
+	public void setTypeName(String typeName) {
+		this.typeName = typeName;
+	}
+
+	public String getTypeName() {
+		return typeName;
+	}
+
+	public void setSize(int size) {
+		this.size = size;
+	}
+
+	public int getSize() {
+		return size;
+	}
+
+	public void setDecimalDigits(int decimalDigits) {
+		this.decimalDigits = decimalDigits;
+	}
+
+	public int getDecimalDigits() {
+		return decimalDigits;
+	}
+
+	public void setRadix(int radix) {
+		this.radix = radix;
+	}
+
+	public int getRadix() {
+		return radix;
+	}
+
+	public void setNullable(int nullable) {
+		this.nullable = nullable;
+	}
+
+	public int getNullable() {
+		return nullable;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setDefaultValue(String defaultValue) {
+		this.defaultValue = defaultValue;
+	}
+
+	public String getDefaultValue() {
+		return defaultValue;
+	}
+
+	public void setCharOctetLength(int charOctetLength) {
+		this.charOctetLength = charOctetLength;
+	}
+
+	public int getCharOctetLength() {
+		return charOctetLength;
+	}
+
+	public void setOrdinalPosition(int ordinalPosition) {
+		this.ordinalPosition = ordinalPosition;
+	}
+
+	public int getOrdinalPosition() {
+		return ordinalPosition;
+	}
 }

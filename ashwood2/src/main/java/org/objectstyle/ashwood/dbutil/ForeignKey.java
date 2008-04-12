@@ -46,96 +46,122 @@ import java.io.Serializable;
 
 public class ForeignKey implements Serializable {
 
-  private String pkTableCatalog;
-  private String pkTableSchema;
-  private String pkTableName;
-  private String pkColumnName;
-  private Table owner;
-  private String columnName;
-  private short updateRule;
-  private short deleteRule;
-  private String name;
-  private String pkName;
-  private short deferrability;
-  private short keySequence;
-  public ForeignKey() {
-  }
-  public ForeignKey(Column fkColumn) {
-    columnName = fkColumn.getName();
-    owner = fkColumn.getOwner();
-    keySequence = (short)(owner.getForeignKeys().size() + 1);
-    name = owner.getName() + "_FK" + keySequence;
-  }
-  public String getPkTableCatalog() {
-    return pkTableCatalog;
-  }
-  public void setPkTableCatalog(String pkTableCatalog) {
-    this.pkTableCatalog = pkTableCatalog;
-  }
-  public void setPkTableSchema(String pkTableSchema) {
-    this.pkTableSchema = pkTableSchema;
-  }
-  public String getPkTableSchema() {
-    return pkTableSchema;
-  }
-  public void setPkTableName(String pkTableName) {
-    this.pkTableName = pkTableName;
-  }
-  public String getPkTableName() {
-    return pkTableName;
-  }
-  public void setPkColumnName(String pkColumnName) {
-    this.pkColumnName = pkColumnName;
-  }
-  public String getPkColumnName() {
-    return pkColumnName;
-  }
-  public void setOwner(Table owner) {
-    this.owner = owner;
-  }
-  public Table getOwner() {
-    return owner;
-  }
-  public void setColumnName(String columnName) {
-    this.columnName = columnName;
-  }
-  public String getColumnName() {
-    return columnName;
-  }
-  public void setKeySequence(short keySequence) {
-    this.keySequence = keySequence;
-  }
-  public short getKeySequence() {
-    return keySequence;
-  }
-  public void setUpdateRule(short updateRule) {
-    this.updateRule = updateRule;
-  }
-  public short getUpdateRule() {
-    return updateRule;
-  }
-  public void setDeleteRule(short deleteRule) {
-    this.deleteRule = deleteRule;
-  }
-  public short getDeleteRule() {
-    return deleteRule;
-  }
-  public void setName(String name) {
-    this.name = name;
-  }
-  public String getName() {
-    return name;
-  }
-  public void setPkName(String pkName) {
-    this.pkName = pkName;
-  }
-  public String getPkName() {
-    return pkName;
-  }
-  public void setDeferrability(short deferrability) {
-    this.deferrability = deferrability;
-  }
-  public short getDeferrability() {
-    return deferrability;
-  }
+	private String pkTableCatalog;
+	private String pkTableSchema;
+	private String pkTableName;
+	private String pkColumnName;
+	private Table owner;
+	private String columnName;
+	private short updateRule;
+	private short deleteRule;
+	private String name;
+	private String pkName;
+	private short deferrability;
+	private short keySequence;
+
+	public ForeignKey() {
+	}
+
+	public ForeignKey(Column fkColumn) {
+		columnName = fkColumn.getName();
+		owner = fkColumn.getOwner();
+		keySequence = (short) (owner.getForeignKeys().size() + 1);
+		name = owner.getName() + "_FK" + keySequence;
+	}
+
+	public String getPkTableCatalog() {
+		return pkTableCatalog;
+	}
+
+	public void setPkTableCatalog(String pkTableCatalog) {
+		this.pkTableCatalog = pkTableCatalog;
+	}
+
+	public void setPkTableSchema(String pkTableSchema) {
+		this.pkTableSchema = pkTableSchema;
+	}
+
+	public String getPkTableSchema() {
+		return pkTableSchema;
+	}
+
+	public void setPkTableName(String pkTableName) {
+		this.pkTableName = pkTableName;
+	}
+
+	public String getPkTableName() {
+		return pkTableName;
+	}
+
+	public void setPkColumnName(String pkColumnName) {
+		this.pkColumnName = pkColumnName;
+	}
+
+	public String getPkColumnName() {
+		return pkColumnName;
+	}
+
+	public void setOwner(Table owner) {
+		this.owner = owner;
+	}
+
+	public Table getOwner() {
+		return owner;
+	}
+
+	public void setColumnName(String columnName) {
+		this.columnName = columnName;
+	}
+
+	public String getColumnName() {
+		return columnName;
+	}
+
+	public void setKeySequence(short keySequence) {
+		this.keySequence = keySequence;
+	}
+
+	public short getKeySequence() {
+		return keySequence;
+	}
+
+	public void setUpdateRule(short updateRule) {
+		this.updateRule = updateRule;
+	}
+
+	public short getUpdateRule() {
+		return updateRule;
+	}
+
+	public void setDeleteRule(short deleteRule) {
+		this.deleteRule = deleteRule;
+	}
+
+	public short getDeleteRule() {
+		return deleteRule;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setPkName(String pkName) {
+		this.pkName = pkName;
+	}
+
+	public String getPkName() {
+		return pkName;
+	}
+
+	public void setDeferrability(short deferrability) {
+		this.deferrability = deferrability;
+	}
+
+	public short getDeferrability() {
+		return deferrability;
+	}
 }

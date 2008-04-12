@@ -42,176 +42,212 @@
 
 package org.objectstyle.ashwood.dbutil;
 
-import java.util.*;
-import java.sql.*;
-import org.objectstyle.ashwood.graph.*;
-import org.objectstyle.ashwood.random.*;
+import java.sql.DatabaseMetaData;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
+import org.objectstyle.ashwood.graph.Algorithm;
+import org.objectstyle.ashwood.graph.ArcIterator;
+import org.objectstyle.ashwood.graph.Digraph;
+import org.objectstyle.ashwood.graph.GraphUtils;
+import org.objectstyle.ashwood.graph.IndegreeTopologicalSort;
+import org.objectstyle.ashwood.graph.MapDigraph;
+import org.objectstyle.ashwood.random.Roulette;
 
 public class RandomSchema {
-  private boolean acyclic = true;
-  private Digraph schemaGraph;
-  private int tableCount = 10;
-  private int maxReferencesPerTable = 3;
-  private int maxForeignKeysPerTable = 3;
-  private Random randomizer = new Random();
-  private List tables = Collections.EMPTY_LIST;
-  private String schemaName;
-  private String catalog;
-  private Map sequencesByTable = Collections.EMPTY_MAP;
-  private int maxLoopsPerTable=0;
-  private int loopCount=0;
+	private boolean acyclic = true;
+	private Digraph schemaGraph;
+	private int tableCount = 10;
+	private int maxReferencesPerTable = 3;
+	private int maxForeignKeysPerTable = 3;
+	private Random randomizer = new Random();
+	private List tables = Collections.EMPTY_LIST;
+	private String schemaName;
+	private String catalog;
+	private Map sequencesByTable = Collections.EMPTY_MAP;
+	private int maxLoopsPerTable = 0;
+	private int loopCount = 0;
 
-  public RandomSchema() {
-  }
+	public RandomSchema() {
+	}
 
-  public boolean isAcyclic() {
-    return acyclic;
-  }
-  public void setAcyclic(boolean acyclic) {
-    this.acyclic = acyclic;
-  }
+	public boolean isAcyclic() {
+		return acyclic;
+	}
 
-  public void generate() {
-    schemaGraph = new MapDigraph(MapDigraph.HASHMAP_FACTORY);
-    generateAcyclicSchema();
-  }
+	public void setAcyclic(boolean acyclic) {
+		this.acyclic = acyclic;
+	}
 
-  private void generateAcyclicSchema() {
-    Digraph graph = new MapDigraph(MapDigraph.HASHMAP_FACTORY);
-    Map vertexToTable = new HashMap();
-    GraphUtils.randomizeAcyclic(graph, tableCount, maxForeignKeysPerTable, maxReferencesPerTable, randomizer);
-    tables = new ArrayList(tableCount);
-    sequencesByTable = new HashMap(tableCount);
-    Algorithm sorter = new IndegreeTopologicalSort(graph);
-    List sortedVertices = new ArrayList(graph.order());
-    while (sorter.hasNext()) sortedVertices.add(sorter.next());
-    if (loopCount > 0 && maxLoopsPerTable > 0) {
-      Roulette loopSelector = new Roulette(sortedVertices.size(), 1, randomizer);
-      for (int i = Math.min(loopCount, sortedVertices.size()); i > 0; i--) {
-        Number vertexIndex = (Number)loopSelector.next();
-        Object vertex = sortedVertices.get(vertexIndex.intValue());
-        graph.putArc(vertex, vertex, Boolean.TRUE);
-      }
-    }
-    for (Iterator i = sortedVertices.iterator(); i.hasNext();) {
-      Integer vertex = (Integer)i.next();
-      Table table = generateTable(vertex, graph);
-      vertexToTable.put(vertex, table);
-      schemaGraph.addVertex(table);
-    }
-    for (ArcIterator i = graph.arcIterator(); i.hasNext();) {
-      i.next();
-      Object origin = vertexToTable.get(i.getOrigin());
-      Object dst = vertexToTable.get(i.getDestination());
-      schemaGraph.putArc(origin, dst, Boolean.TRUE);
-    }
-  }
+	public void generate() {
+		schemaGraph = new MapDigraph(MapDigraph.HASHMAP_FACTORY);
+		generateAcyclicSchema();
+	}
 
-  private Table generateTable(Integer vertex, Digraph graph) {
-    Table table = new Table(catalog, schemaName, "TABLE" + vertex);
-    int outSize = graph.outgoingSize(vertex);
-    int inSize = graph.incomingSize(vertex);
-    if (outSize != 0 || (outSize == 0 && inSize == 0)) {
-      Column pkColumn = new Column();
-      pkColumn.setName(table.getName() + "_ID");
-      pkColumn.setTypeName("INTEGER");
-      pkColumn.setNullable(DatabaseMetaData.columnNoNulls);
-      table.addColumn(pkColumn);
-      PrimaryKey pk = new PrimaryKey(pkColumn);
-      table.addPrimaryKey(pk);
-      sequencesByTable.put(table, new Sequence(table.getName() + "_SEQ"));
-    }
-    for (ArcIterator i = graph.incomingIterator(vertex); i.hasNext();) {
-      i.next();
-      Integer origin = (Integer)i.getOrigin();
-      String referencedTableName = "TABLE" + origin;
-      String pkColumnName = referencedTableName + "_ID";
-      String pkName = referencedTableName + "_PK";
-      int fkCount = (!vertex.equals(origin) ? 1 : generateFkCountForLoop());
-      for (int j = 1; j <= fkCount; j++) {
-        String fkColumnSuffix = (/*fkCount == 1 ? "" :*/ String.valueOf(j));
-        Column fkColumn = new Column();
-        fkColumn.setName(pkColumnName + fkColumnSuffix);
-        fkColumn.setTypeName("INTEGER");
-        fkColumn.setNullable(DatabaseMetaData.columnNoNulls);
-        table.addColumn(fkColumn);
-        if (outSize == 0) {
-          PrimaryKey pk = new PrimaryKey(fkColumn);
-          table.addPrimaryKey(pk);
-        }
-        ForeignKey fk = new ForeignKey(fkColumn);
-        fk.setPkColumnName(pkColumnName);
-        fk.setPkName(pkName);
-        fk.setPkTableCatalog(catalog);
-        fk.setPkTableName(referencedTableName);
-        fk.setPkTableSchema(schemaName);
-        table.addForeignKey(fk);
-      }
-    }
-    tables.add(table);
-    return table;
-  }
+	private void generateAcyclicSchema() {
+		Digraph graph = new MapDigraph(MapDigraph.HASHMAP_FACTORY);
+		Map vertexToTable = new HashMap();
+		GraphUtils.randomizeAcyclic(graph, tableCount, maxForeignKeysPerTable,
+				maxReferencesPerTable, randomizer);
+		tables = new ArrayList(tableCount);
+		sequencesByTable = new HashMap(tableCount);
+		Algorithm sorter = new IndegreeTopologicalSort(graph);
+		List sortedVertices = new ArrayList(graph.order());
+		while (sorter.hasNext())
+			sortedVertices.add(sorter.next());
+		if (loopCount > 0 && maxLoopsPerTable > 0) {
+			Roulette loopSelector = new Roulette(sortedVertices.size(), 1,
+					randomizer);
+			for (int i = Math.min(loopCount, sortedVertices.size()); i > 0; i--) {
+				Number vertexIndex = (Number) loopSelector.next();
+				Object vertex = sortedVertices.get(vertexIndex.intValue());
+				graph.putArc(vertex, vertex, Boolean.TRUE);
+			}
+		}
+		for (Iterator i = sortedVertices.iterator(); i.hasNext();) {
+			Integer vertex = (Integer) i.next();
+			Table table = generateTable(vertex, graph);
+			vertexToTable.put(vertex, table);
+			schemaGraph.addVertex(table);
+		}
+		for (ArcIterator i = graph.arcIterator(); i.hasNext();) {
+			i.next();
+			Object origin = vertexToTable.get(i.getOrigin());
+			Object dst = vertexToTable.get(i.getDestination());
+			schemaGraph.putArc(origin, dst, Boolean.TRUE);
+		}
+	}
 
-  private int generateFkCountForLoop() {
-    int count = randomizer.nextInt(maxLoopsPerTable) + 1;
-    return count;
-  }
+	private Table generateTable(Integer vertex, Digraph graph) {
+		Table table = new Table(catalog, schemaName, "TABLE" + vertex);
+		int outSize = graph.outgoingSize(vertex);
+		int inSize = graph.incomingSize(vertex);
+		if (outSize != 0 || (outSize == 0 && inSize == 0)) {
+			Column pkColumn = new Column();
+			pkColumn.setName(table.getName() + "_ID");
+			pkColumn.setTypeName("INTEGER");
+			pkColumn.setNullable(DatabaseMetaData.columnNoNulls);
+			table.addColumn(pkColumn);
+			PrimaryKey pk = new PrimaryKey(pkColumn);
+			table.addPrimaryKey(pk);
+			sequencesByTable.put(table, new Sequence(table.getName() + "_SEQ"));
+		}
+		for (ArcIterator i = graph.incomingIterator(vertex); i.hasNext();) {
+			i.next();
+			Integer origin = (Integer) i.getOrigin();
+			String referencedTableName = "TABLE" + origin;
+			String pkColumnName = referencedTableName + "_ID";
+			String pkName = referencedTableName + "_PK";
+			int fkCount = (!vertex.equals(origin) ? 1
+					: generateFkCountForLoop());
+			for (int j = 1; j <= fkCount; j++) {
+				String fkColumnSuffix = (/* fkCount == 1 ? "" : */String
+						.valueOf(j));
+				Column fkColumn = new Column();
+				fkColumn.setName(pkColumnName + fkColumnSuffix);
+				fkColumn.setTypeName("INTEGER");
+				fkColumn.setNullable(DatabaseMetaData.columnNoNulls);
+				table.addColumn(fkColumn);
+				if (outSize == 0) {
+					PrimaryKey pk = new PrimaryKey(fkColumn);
+					table.addPrimaryKey(pk);
+				}
+				ForeignKey fk = new ForeignKey(fkColumn);
+				fk.setPkColumnName(pkColumnName);
+				fk.setPkName(pkName);
+				fk.setPkTableCatalog(catalog);
+				fk.setPkTableName(referencedTableName);
+				fk.setPkTableSchema(schemaName);
+				table.addForeignKey(fk);
+			}
+		}
+		tables.add(table);
+		return table;
+	}
 
-  public Digraph getSchemaGraph() {
-    return schemaGraph;
-  }
-  public void setTableCount(int tableCount) {
-    this.tableCount = tableCount;
-  }
-  public int getTableCount() {
-    return tableCount;
-  }
-  public void setMaxReferencesPerTable(int maxReferencesPerTable) {
-    this.maxReferencesPerTable = maxReferencesPerTable;
-  }
-  public int getMaxReferencesPerTable() {
-    return maxReferencesPerTable;
-  }
-  public void setMaxForeignKeysPerTable(int maxForeignKeysPerTable) {
-    this.maxForeignKeysPerTable = maxForeignKeysPerTable;
-  }
-  public int getMaxForeignKeysPerTable() {
-    return maxForeignKeysPerTable;
-  }
-  public void setRandomizer(Random randomizer) {
-    this.randomizer = randomizer;
-  }
-  public Random getRandomizer() {
-    return randomizer;
-  }
-  public List getTables() {
-    return Collections.unmodifiableList(tables);
-  }
-  public void setSchemaName(String schemaName) {
-    this.schemaName = schemaName;
-  }
-  public String getSchemaName() {
-    return schemaName;
-  }
-  public void setCatalog(String catalog) {
-    this.catalog = catalog;
-  }
-  public String getCatalog() {
-    return catalog;
-  }
-  public Map getSequencesByTable() {
-    return Collections.unmodifiableMap(sequencesByTable);
-  }
-  public void setMaxLoopsPerTable(int maxLoopsPerTable) {
-    this.maxLoopsPerTable = maxLoopsPerTable;
-  }
-  public int getMaxLoopsPerTable() {
-    return maxLoopsPerTable;
-  }
-  public void setLoopCount(int loopCount) {
-    this.loopCount = loopCount;
-  }
-  public int getLoopCount() {
-    return loopCount;
-  }
+	private int generateFkCountForLoop() {
+		int count = randomizer.nextInt(maxLoopsPerTable) + 1;
+		return count;
+	}
+
+	public Digraph getSchemaGraph() {
+		return schemaGraph;
+	}
+
+	public void setTableCount(int tableCount) {
+		this.tableCount = tableCount;
+	}
+
+	public int getTableCount() {
+		return tableCount;
+	}
+
+	public void setMaxReferencesPerTable(int maxReferencesPerTable) {
+		this.maxReferencesPerTable = maxReferencesPerTable;
+	}
+
+	public int getMaxReferencesPerTable() {
+		return maxReferencesPerTable;
+	}
+
+	public void setMaxForeignKeysPerTable(int maxForeignKeysPerTable) {
+		this.maxForeignKeysPerTable = maxForeignKeysPerTable;
+	}
+
+	public int getMaxForeignKeysPerTable() {
+		return maxForeignKeysPerTable;
+	}
+
+	public void setRandomizer(Random randomizer) {
+		this.randomizer = randomizer;
+	}
+
+	public Random getRandomizer() {
+		return randomizer;
+	}
+
+	public List getTables() {
+		return Collections.unmodifiableList(tables);
+	}
+
+	public void setSchemaName(String schemaName) {
+		this.schemaName = schemaName;
+	}
+
+	public String getSchemaName() {
+		return schemaName;
+	}
+
+	public void setCatalog(String catalog) {
+		this.catalog = catalog;
+	}
+
+	public String getCatalog() {
+		return catalog;
+	}
+
+	public Map getSequencesByTable() {
+		return Collections.unmodifiableMap(sequencesByTable);
+	}
+
+	public void setMaxLoopsPerTable(int maxLoopsPerTable) {
+		this.maxLoopsPerTable = maxLoopsPerTable;
+	}
+
+	public int getMaxLoopsPerTable() {
+		return maxLoopsPerTable;
+	}
+
+	public void setLoopCount(int loopCount) {
+		this.loopCount = loopCount;
+	}
+
+	public int getLoopCount() {
+		return loopCount;
+	}
 }

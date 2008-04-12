@@ -46,40 +46,50 @@ import java.io.Serializable;
 
 public class PrimaryKey implements Serializable {
 
-  private String columnName;
-  private String name;
-  private Table owner;
-  private short keySequence;
-  public PrimaryKey() {
-  }
-  public PrimaryKey(Column pkColumn) {
-    columnName = pkColumn.getName();
-    owner = pkColumn.getOwner();
-    name = owner.getName() + "_PK";
-    keySequence = (short)(owner.getPrimaryKeys().size() + 1);
-  }
-  public String getColumnName() {
-    return columnName;
-  }
-  public void setColumnName(String columnName) {
-    this.columnName = columnName;
-  }
-  public void setName(String name) {
-    this.name = name;
-  }
-  public String getName() {
-    return name;
-  }
-  public void setKeySequence(short keySequence) {
-    this.keySequence = keySequence;
-  }
-  public short getKeySequence() {
-    return keySequence;
-  }
-  public void setOwner(Table owner) {
-    this.owner = owner;
-  }
-  public Table getOwner() {
-    return owner;
-  }
+	private String columnName;
+	private String name;
+	private Table owner;
+	private short keySequence;
+
+	public PrimaryKey() {
+	}
+
+	public PrimaryKey(Column pkColumn) {
+		columnName = pkColumn.getName();
+		owner = pkColumn.getOwner();
+		name = owner.getName() + "_PK";
+		keySequence = (short) (owner.getPrimaryKeys().size() + 1);
+	}
+
+	public String getColumnName() {
+		return columnName;
+	}
+
+	public void setColumnName(String columnName) {
+		this.columnName = columnName;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setKeySequence(short keySequence) {
+		this.keySequence = keySequence;
+	}
+
+	public short getKeySequence() {
+		return keySequence;
+	}
+
+	public void setOwner(Table owner) {
+		this.owner = owner;
+	}
+
+	public Table getOwner() {
+		return owner;
+	}
 }
