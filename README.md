@@ -1,10 +1,10 @@
 ## Status: April 16 2011
 
-Ashwood2 is unmaintained and exists for archival purposes (Cayenne 3.0 depends on it).
+Ashwood2 is unmaintained and exists for archival purposes ([Apache Cayenne](http://cayenne.apache.org) 3.0 depends on it).
 
 In Cayenne 3.1 and newer versions a subset of Ashwood functionality is incorporated in Cayenne core
 
-The original Ashwood lib can be found at http://sourceforge.net/projects/ashwood/
+The original Ashwood lib can be found [on sourceforge](http://sourceforge.net/projects/ashwood/).
 
 ## Status: April 14 2008
 
